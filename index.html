@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Algorithm Simulator</title>
+</head>
+<body>
+
+<h2>Algorithm Simulator (Agentic AI)</h2>
+
+<input type="text" id="arrayInput" placeholder="Enter numbers e.g. 5,2,8,1">
+<button onclick="startSimulation()">Start</button>
+
+<div id="visual"></div>
+<p id="explanation"></p>
+
+<script>
+async function startSimulation() {
+    let input = document.getElementById("arrayInput").value;
+    let arr = input.split(",").map(Number);
+
+    let response = await fetch("http://127.0.0.1:5000/simulate", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({array: arr})
+    });
+
+    let steps = await response.json();
+
+    for (let step of steps) {
+        display(step);
+        await new Promise(r => setTimeout(r, 1500));
+    }
+}
+
+function display(step) {
+    document.getElementById("visual").innerHTML =
+        step.array.map(x => `<span style="margin:10px">${x}</span>`).join("");
+
+    document.getElementById("explanation").innerText =
+        step.explanation;
+}
+</script>
+
+</body>
+</html>
